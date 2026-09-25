@@ -41,6 +41,23 @@ These are not suggestions. They come from reference images in
 Tokens live in `src/app/globals.css` under `@theme`. Tailwind v4 is CSS-first, so there
 is no `tailwind.config.ts`.
 
+## Course order
+
+Topics follow **the exact order of `active/research/base-instructions/What to Learn.md`**.
+This is deliberate and was chosen over a dependency ordering. Do not "fix" it by moving
+prerequisites earlier.
+
+| Module | Slug | Weeks |
+|---|---|---|
+| Agent Core | `core` | 1-4: agents, agentic coding, tool calling, context engineering |
+| Reach and Reliability | `reach` | 5-8: APIs, MCP, evals, computer-use |
+| Knowledge and Boundaries | `knowledge` | 9-12: RAG, multimodal, memory, security |
+| Structure and Economics | `structure` | 13-16: structured outputs, decomposition, routing, fine-tuning |
+
+Module and topic order live entirely in the database (`modules.number`, `topics.number`,
+`topics.week_number`). No slug is hardcoded anywhere in `src/`, so reordering is a data
+migration and never a code change.
+
 ## Where the rules live
 
 Three pure modules with no Supabase imports, so they stay testable and cannot drift:

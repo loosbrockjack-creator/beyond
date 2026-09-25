@@ -32,6 +32,12 @@ export default async function AssignmentsPage({
         lead="One build per week. Projects are graded against a rubric but never gate the next topic."
       />
 
+      {view.topics.every((t) => !t.project) ? (
+        <p className="mb-10 max-w-[62ch] text-sm text-muted">
+          No projects written yet. One build per week gets added as each topic is written.
+        </p>
+      ) : null}
+
       <div className="grid grid-cols-[1.5rem_1fr_auto_auto] items-center gap-x-5 border-b border-line pb-2.5">
         <span className="label">Wk</span>
         <span className="label">Project</span>
@@ -76,7 +82,7 @@ export default async function AssignmentsPage({
 
           return (
             <li key={t.topic.id} className="border-b border-line">
-              {locked ? (
+              {locked || !t.project ? (
                 <div className="px-1 opacity-70">{row}</div>
               ) : (
                 <Link

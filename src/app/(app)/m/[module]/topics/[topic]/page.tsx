@@ -75,28 +75,39 @@ export default async function TopicPage({
       ) : null}
 
       <section className="mb-14">
-        <SectionHeader right={passed ? "Passed" : `${view.attempts.length} attempts`}>
+        <SectionHeader
+          right={!view.quiz ? undefined : passed ? "Passed" : `${view.attempts.length} attempts`}
+        >
           Quiz
         </SectionHeader>
 
         <div className="mt-6">
-          <AttemptHistory attempts={view.attempts} />
+          {!view.quiz ? (
+            <p className="max-w-[62ch] text-sm text-muted">
+              No quiz written yet. Passing one at 100% is what unlocks the next topic, so
+              this topic stays open until there is something to pass.
+            </p>
+          ) : (
+            <>
+              <AttemptHistory attempts={view.attempts} />
 
-          {!locked ? (
-            <div className="mt-6">
-              <Link href={`/m/${moduleSlug}/topics/${topicSlug}/quiz`}>
-                <Button variant={passed ? "secondary" : "primary"}>
-                  {passed ? "Retake quiz" : view.attempts.length > 0 ? "Try again" : "Take quiz"}
-                  <ArrowRight className="size-3.5" />
-                </Button>
-              </Link>
-              {!passed ? (
-                <p className="mt-3 text-xs text-muted">
-                  100% unlocks the next topic. Unlimited retakes.
-                </p>
+              {!locked ? (
+                <div className="mt-6">
+                  <Link href={`/m/${moduleSlug}/topics/${topicSlug}/quiz`}>
+                    <Button variant={passed ? "secondary" : "primary"}>
+                      {passed ? "Retake quiz" : view.attempts.length > 0 ? "Try again" : "Take quiz"}
+                      <ArrowRight className="size-3.5" />
+                    </Button>
+                  </Link>
+                  {!passed ? (
+                    <p className="mt-3 text-xs text-muted">
+                      100% unlocks the next topic. Unlimited retakes.
+                    </p>
+                  ) : null}
+                </div>
               ) : null}
-            </div>
-          ) : null}
+            </>
+          )}
         </div>
       </section>
 
@@ -131,7 +142,14 @@ export default async function TopicPage({
             ) : null}
           </div>
         </section>
-      ) : null}
+      ) : (
+        <section className="mb-14">
+          <SectionHeader>Project</SectionHeader>
+          <p className="mt-6 max-w-[62ch] text-sm text-muted">
+            No build project written yet.
+          </p>
+        </section>
+      )}
 
       <section>
         <SectionHeader right={`${resources?.length ?? 0} saved`}>Resources</SectionHeader>

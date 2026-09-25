@@ -31,6 +31,18 @@ export function projectDue(startDate: string, week: number): Date {
   return d;
 }
 
+/**
+ * The weekly quiz is due Sunday at 11:59pm, at the end of its week. It sits
+ * after the project because it draws on every session in the week.
+ * Sessions themselves never have a deadline.
+ */
+export function quizDue(startDate: string, week: number): Date {
+  const d = weekStart(startDate, week);
+  d.setDate(d.getDate() + 6);
+  d.setHours(23, 59, 0, 0);
+  return d;
+}
+
 export function currentWeek(startDate: string, now: Date = new Date()): number {
   for (let w = WEEKS_TOTAL; w >= 1; w--) {
     if (now >= weekStart(startDate, w)) return w;

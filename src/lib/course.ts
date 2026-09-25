@@ -1,10 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
 import { deriveTopicStatuses, activeTopic, type TopicStatus } from "@/lib/gating";
 import { gpaOf, gradeFor, type Grade } from "@/lib/gpa";
-import { projectDue, currentWeek, isOverdue, wasLate, WEEKS_TOTAL } from "@/lib/schedule";
+import { projectDue, quizDue, currentWeek, isOverdue, wasLate, WEEKS_TOTAL } from "@/lib/schedule";
 import type {
   Module, Topic, Quiz, Project, QuizAttempt, Submission,
+  LearningSession, SessionProgress,
 } from "@/lib/supabase/types";
+
+export interface SessionView {
+  session: LearningSession;
+  progress: SessionProgress | null;
+  /** Sessions are never locked and never late. They are done or not. */
+  done: boolean;
+}
 
 export interface TopicView {
   topic: Topic;
@@ -18,6 +26,13 @@ export interface TopicView {
   late: boolean;
   grade: Grade | null;
   moduleSlug: string;
+
+  sessions: SessionView[];
+  sessionsDone: number;
+  /** The weekly quiz draws on every session, so it waits for all of them. */
+  quizReady: boolean;
+  quizDue: Date;
+  quizOverdue: boolean;
 }
 
 export interface ModuleView {
@@ -54,16 +69,20 @@ export async function loadCourse(): Promise<CourseView> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("loadCourse called without a session");
 
-  const [courseRes, modulesRes, topicsRes, quizzesRes, projectsRes, attemptsRes, submissionsRes] =
-    await Promise.all([
-      supabase.from("course").select("*").eq("user_id", user.id).maybeSingle(),
-      supabase.from("modules").select("*").order("number"),
-      supabase.from("topics").select("*").order("number"),
-      supabase.from("quizzes").select("*"),
-      supabase.from("projects").select("*"),
-      supabase.from("quiz_attempts").select("*").order("attempt_number"),
-      supabase.from("submissions").select("*"),
-    ]);
+  const [
+    courseRes, modulesRes, topicsRes, quizzesRes, projectsRes,
+    attemptsRes, submissionsRes, sessionsRes, sessionProgressRes,
+  ] = await Promise.all([
+    supabase.from("course").select("*").eq("user_id", user.id).maybeSingle(),
+    supabase.from("modules").select("*").order("number"),
+    supabase.from("topics").select("*").order("number"),
+    supabase.from("quizzes").select("*"),
+    supabase.from("projects").select("*"),
+    supabase.from("quiz_attempts").select("*").order("attempt_number"),
+    supabase.from("submissions").select("*"),
+    supabase.from("sessions").select("*").order("order_index"),
+    supabase.from("session_progress").select("*"),
+  ]);
 
   const modules = modulesRes.data ?? [];
   const topics = topicsRes.data ?? [];
@@ -71,6 +90,8 @@ export async function loadCourse(): Promise<CourseView> {
   const projects = projectsRes.data ?? [];
   const attempts = attemptsRes.data ?? [];
   const submissions = submissionsRes.data ?? [];
+  const sessions = sessionsRes.data ?? [];
+  const sessionProgress = sessionProgressRes.data ?? [];
 
   const startDate = courseRes.data?.start_date ?? upcomingMonday();
   const seeded = courseRes.data?.seeded ?? false;
@@ -78,6 +99,14 @@ export async function loadCourse(): Promise<CourseView> {
   const quizByTopic = new Map(quizzes.map((q) => [q.topic_id, q]));
   const projectByTopic = new Map(projects.map((p) => [p.topic_id, p]));
   const submissionByProject = new Map(submissions.map((s) => [s.project_id, s]));
+
+  const progressBySession = new Map(sessionProgress.map((sp) => [sp.session_id, sp]));
+  const sessionsByTopic = new Map<string, LearningSession[]>();
+  for (const sn of sessions) {
+    const list = sessionsByTopic.get(sn.topic_id) ?? [];
+    list.push(sn);
+    sessionsByTopic.set(sn.topic_id, list);
+  }
 
   const attemptsByQuiz = new Map<string, QuizAttempt[]>();
   for (const a of attempts) {
@@ -105,8 +134,22 @@ export async function loadCourse(): Promise<CourseView> {
     const project = projectByTopic.get(topic.id) ?? null;
     const submission = project ? submissionByProject.get(project.id) ?? null : null;
     const due = projectDue(startDate, topic.week_number);
+    const qDue = quizDue(startDate, topic.week_number);
+
+    const topicSessions: SessionView[] = (sessionsByTopic.get(topic.id) ?? []).map((sn) => {
+      const sp = progressBySession.get(sn.id) ?? null;
+      return { session: sn, progress: sp, done: sp?.completed_at != null };
+    });
+    const sessionsDone = topicSessions.filter((sv) => sv.done).length;
+    const quizPassed = passedIds.has(topic.id);
 
     return {
+      sessions: topicSessions,
+      sessionsDone,
+      // With no sessions written yet the quiz is not held back by them.
+      quizReady: topicSessions.length === 0 || sessionsDone === topicSessions.length,
+      quizDue: qDue,
+      quizOverdue: !quizPassed && new Date() > qDue,
       topic,
       status: statuses.get(topic.id) ?? "locked",
       quiz,

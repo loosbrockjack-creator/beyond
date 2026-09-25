@@ -45,7 +45,22 @@ export default async function DashboardPage() {
             </div>
             <p className="mt-3 max-w-[62ch] text-muted">{active.topic.summary}</p>
             <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
-              <Meta label="Quiz" value={active.attempts.length > 0 ? `${active.attempts.length} attempts, not passed` : "Not started"} />
+              {active.sessions.length > 0 ? (
+                <Meta
+                  label="Sessions"
+                  value={`${active.sessionsDone} of ${active.sessions.length} done`}
+                />
+              ) : null}
+              <Meta
+                label="Quiz"
+                value={
+                  !active.quizReady
+                    ? "After the sessions"
+                    : active.attempts.length > 0
+                      ? `${active.attempts.length} attempts, not passed`
+                      : "Not started"
+                }
+              />
               <Meta
                 label="Project"
                 value={

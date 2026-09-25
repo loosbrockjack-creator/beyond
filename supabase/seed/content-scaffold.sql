@@ -42,3 +42,36 @@ cross join (values
   (5,'Documented','A README that explains the decisions and the tradeoffs, not just the install commands.')
 ) as r(i, label, description)
 where t.slug = :'slug';
+
+
+-- ============================================================================
+-- SESSIONS
+-- A week is subdivided into sessions: one source to read, then a three question
+-- recall. Sessions have no deadline. Only the weekly quiz and project do.
+-- ============================================================================
+
+-- 6. One session per source. order_index communicates the intended reading
+--    order but does not enforce it; every session is open from the start.
+insert into sessions (topic_id, order_index, title, source_url, source_kind, est_minutes, note)
+select id, 1, 'Title of the piece', 'https://...', 'article', 15,
+       'Why this one, and what to watch for while reading.'
+from topics where slug = :'slug';
+
+-- 7. Three recall questions per session. Set carried_from_session_id to the
+--    PREVIOUS session's id on one of them: delayed retrieval is what actually
+--    builds retention, immediate recall is only a comprehension check.
+insert into recall_questions (session_id, order_index, prompt, explanation, carried_from_session_id)
+select s.id, 1, 'Question about what was just read', 'Why the right answer is right.', null
+from sessions s join topics t on t.id = s.topic_id
+where t.slug = :'slug' and s.order_index = 1;
+
+insert into recall_options (question_id, order_index, label, is_correct)
+select rq.id, 1, 'Option text', true
+from recall_questions rq join sessions s on s.id = rq.session_id
+join topics t on t.id = s.topic_id
+where t.slug = :'slug' and s.order_index = 1 and rq.order_index = 1;
+
+-- 8. Weekly quiz questions are tagged with the session they came from, so an
+--    attempt can be weighted toward whatever was recalled worst. Write more
+--    than five: each attempt samples five from the pool.
+--    (Add session_id to the quiz_questions insert in step 2 above.)

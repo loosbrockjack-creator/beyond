@@ -10,6 +10,7 @@ import { LockedNotice } from "@/components/primitives/Status";
 import { Button } from "@/components/primitives/Button";
 import { AttemptHistory } from "@/components/quiz/AttemptHistory";
 import { formatDate, formatDateTime, relativeDue } from "@/lib/schedule";
+import { SessionList } from "@/components/SessionList";
 
 export default async function TopicPage({
   params,
@@ -76,9 +77,40 @@ export default async function TopicPage({
 
       <section className="mb-14">
         <SectionHeader
+          right={
+            view.sessions.length > 0
+              ? `${view.sessionsDone} of ${view.sessions.length} done`
+              : undefined
+          }
+        >
+          Sessions
+        </SectionHeader>
+
+        <div className="mt-4">
+          {view.sessions.length > 0 ? (
+            <>
+              <SessionList
+                sessions={view.sessions}
+                basePath={`/m/${moduleSlug}/topics/${topicSlug}`}
+              />
+              <p className="mt-4 text-xs text-muted">
+                Do these in any order, whenever you want. Sessions have no deadline.
+              </p>
+            </>
+          ) : (
+            <p className="max-w-[62ch] text-sm text-muted">
+              No sessions written for this week yet. Each one is a single thing to read
+              followed by a three question recall.
+            </p>
+          )}
+        </div>
+      </section>
+
+      <section className="mb-14">
+        <SectionHeader
           right={!view.quiz ? undefined : passed ? "Passed" : `${view.attempts.length} attempts`}
         >
-          Quiz
+          Weekly quiz
         </SectionHeader>
 
         <div className="mt-6">
@@ -91,7 +123,14 @@ export default async function TopicPage({
             <>
               <AttemptHistory attempts={view.attempts} />
 
-              {!locked ? (
+              {!locked && !view.quizReady ? (
+                <p className="mt-6 max-w-[62ch] text-sm text-muted">
+                  Opens once all {view.sessions.length} sessions are done. The quiz is drawn
+                  from them, weighted toward whatever you recalled worst.
+                </p>
+              ) : null}
+
+              {!locked && view.quizReady ? (
                 <div className="mt-6">
                   <Link href={`/m/${moduleSlug}/topics/${topicSlug}/quiz`}>
                     <Button variant={passed ? "secondary" : "primary"}>
@@ -101,7 +140,9 @@ export default async function TopicPage({
                   </Link>
                   {!passed ? (
                     <p className="mt-3 text-xs text-muted">
-                      100% unlocks the next topic. Unlimited retakes.
+                      100% unlocks the next topic. Unlimited retakes. Due{" "}
+                      {formatDateTime(view.quizDue)}
+                      {view.quizOverdue ? ", overdue" : ""}.
                     </p>
                   ) : null}
                 </div>

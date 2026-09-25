@@ -24,6 +24,30 @@ export type Database = {
         Update: { created_at?: string; id?: string; module_id?: string; number?: number; slug?: string; summary?: string | null; title?: string; week_number?: number; why_it_matters?: string | null };
         Relationships: [{ foreignKeyName: "topics_module_id_fkey"; columns: ["module_id"]; isOneToOne: false; referencedRelation: "modules"; referencedColumns: ["id"] }];
       };
+      sessions: {
+        Row: { created_at: string; est_minutes: number | null; id: string; note: string | null; order_index: number; source_kind: string; source_url: string | null; title: string; topic_id: string };
+        Insert: { created_at?: string; est_minutes?: number | null; id?: string; note?: string | null; order_index: number; source_kind?: string; source_url?: string | null; title: string; topic_id: string };
+        Update: { created_at?: string; est_minutes?: number | null; id?: string; note?: string | null; order_index?: number; source_kind?: string; source_url?: string | null; title?: string; topic_id?: string };
+        Relationships: [{ foreignKeyName: "sessions_topic_id_fkey"; columns: ["topic_id"]; isOneToOne: false; referencedRelation: "topics"; referencedColumns: ["id"] }];
+      };
+      recall_questions: {
+        Row: { carried_from_session_id: string | null; explanation: string | null; id: string; order_index: number; prompt: string; session_id: string };
+        Insert: { carried_from_session_id?: string | null; explanation?: string | null; id?: string; order_index: number; prompt: string; session_id: string };
+        Update: { carried_from_session_id?: string | null; explanation?: string | null; id?: string; order_index?: number; prompt?: string; session_id?: string };
+        Relationships: [{ foreignKeyName: "recall_questions_session_id_fkey"; columns: ["session_id"]; isOneToOne: false; referencedRelation: "sessions"; referencedColumns: ["id"] }];
+      };
+      recall_options: {
+        Row: { id: string; is_correct: boolean; label: string; order_index: number; question_id: string };
+        Insert: { id?: string; is_correct?: boolean; label: string; order_index: number; question_id: string };
+        Update: { id?: string; is_correct?: boolean; label?: string; order_index?: number; question_id?: string };
+        Relationships: [{ foreignKeyName: "recall_options_question_id_fkey"; columns: ["question_id"]; isOneToOne: false; referencedRelation: "recall_questions"; referencedColumns: ["id"] }];
+      };
+      session_progress: {
+        Row: { answers: Json; completed_at: string | null; correct_count: number | null; opened_at: string | null; score: number | null; session_id: string; total_count: number | null; user_id: string };
+        Insert: { answers?: Json; completed_at?: string | null; correct_count?: number | null; opened_at?: string | null; score?: number | null; session_id: string; total_count?: number | null; user_id: string };
+        Update: { answers?: Json; completed_at?: string | null; correct_count?: number | null; opened_at?: string | null; score?: number | null; session_id?: string; total_count?: number | null; user_id?: string };
+        Relationships: [{ foreignKeyName: "session_progress_session_id_fkey"; columns: ["session_id"]; isOneToOne: false; referencedRelation: "sessions"; referencedColumns: ["id"] }];
+      };
       quizzes: {
         Row: { id: string; pass_threshold: number; title: string; topic_id: string };
         Insert: { id?: string; pass_threshold?: number; title: string; topic_id: string };
@@ -31,9 +55,9 @@ export type Database = {
         Relationships: [{ foreignKeyName: "quizzes_topic_id_fkey"; columns: ["topic_id"]; isOneToOne: true; referencedRelation: "topics"; referencedColumns: ["id"] }];
       };
       quiz_questions: {
-        Row: { explanation: string | null; id: string; is_placeholder: boolean; order_index: number; prompt: string; quiz_id: string };
-        Insert: { explanation?: string | null; id?: string; is_placeholder?: boolean; order_index: number; prompt: string; quiz_id: string };
-        Update: { explanation?: string | null; id?: string; is_placeholder?: boolean; order_index?: number; prompt?: string; quiz_id?: string };
+        Row: { explanation: string | null; id: string; is_placeholder: boolean; order_index: number; prompt: string; quiz_id: string; session_id: string | null };
+        Insert: { explanation?: string | null; id?: string; is_placeholder?: boolean; order_index: number; prompt: string; quiz_id: string; session_id?: string | null };
+        Update: { explanation?: string | null; id?: string; is_placeholder?: boolean; order_index?: number; prompt?: string; quiz_id?: string; session_id?: string | null };
         Relationships: [{ foreignKeyName: "quiz_questions_quiz_id_fkey"; columns: ["quiz_id"]; isOneToOne: false; referencedRelation: "quizzes"; referencedColumns: ["id"] }];
       };
       quiz_options: {
@@ -127,3 +151,7 @@ export type RubricScore = Tables<"rubric_scores">;
 export type Resource = Tables<"resources">;
 export type Tool = Tables<"tools">;
 export type Course = Tables<"course">;
+export type LearningSession = Tables<"sessions">;
+export type RecallQuestion = Tables<"recall_questions">;
+export type RecallOption = Tables<"recall_options">;
+export type SessionProgress = Tables<"session_progress">;

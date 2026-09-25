@@ -1,0 +1,9 @@
+Building Effective Agents (Anthropic) https://www.anthropic.com/engineering/building-effective-agents?utm_source=chatgpt.com
+Agents API (OpenAI) (https://developers.openai.com/api/docs/guides/agents-api/overview?utm_source=chatgpt.com)
+Architecture (OpenAI) https://developers.openai.com/api/docs/guides/agents-api/architecture?utm_source=chatgpt.com
+Building More Efficent Agents (Anthropic) https://www.youtube.com/watch?v=uhJJgc-0iTQ
+Multi-agent (OpenAI) https://developers.openai.com/api/docs/guides/agents-api/multi-agent?utm_source=chatgpt.com
+Harness (Anthropic) https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents?utm_source=chatgpt.com
+Compaction (OpenAI) https://developers.openai.com/api/docs/guides/compaction?utm_source=chatgpt.com
+Guardrails and human review (OpenAI) https://developers.openai.com/api/docs/guides/agents/guardrails-approvals?utm_source=chatgpt.com
+Sandbox Security (OpenAI) https://developers.openai.com/api/docs/guides/agents-api/environments/security?utm_source=chatgpt.com

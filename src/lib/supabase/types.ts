@@ -7,9 +7,9 @@ export type Database = {
   public: {
     Tables: {
       course: {
-        Row: { created_at: string; seeded: boolean; start_date: string; user_id: string };
-        Insert: { created_at?: string; seeded?: boolean; start_date: string; user_id: string };
-        Update: { created_at?: string; seeded?: boolean; start_date?: string; user_id?: string };
+        Row: { created_at: string; seeded: boolean; spine: string | null; start_date: string; user_id: string };
+        Insert: { created_at?: string; seeded?: boolean; spine?: string | null; start_date: string; user_id: string };
+        Update: { created_at?: string; seeded?: boolean; spine?: string | null; start_date?: string; user_id?: string };
         Relationships: [];
       };
       modules: {
@@ -73,9 +73,9 @@ export type Database = {
         Relationships: [{ foreignKeyName: "quiz_attempts_quiz_id_fkey"; columns: ["quiz_id"]; isOneToOne: false; referencedRelation: "quizzes"; referencedColumns: ["id"] }];
       };
       projects: {
-        Row: { brief: string | null; id: string; is_placeholder: boolean; title: string; topic_id: string };
-        Insert: { brief?: string | null; id?: string; is_placeholder?: boolean; title: string; topic_id: string };
-        Update: { brief?: string | null; id?: string; is_placeholder?: boolean; title?: string; topic_id?: string };
+        Row: { brief: string | null; est_hours: number | null; generated_at: string | null; generated_from: Json | null; hard_constraint: string | null; id: string; is_placeholder: boolean; spine_note: string | null; title: string; topic_id: string };
+        Insert: { brief?: string | null; est_hours?: number | null; generated_at?: string | null; generated_from?: Json | null; hard_constraint?: string | null; id?: string; is_placeholder?: boolean; spine_note?: string | null; title: string; topic_id: string };
+        Update: { brief?: string | null; est_hours?: number | null; generated_at?: string | null; generated_from?: Json | null; hard_constraint?: string | null; id?: string; is_placeholder?: boolean; spine_note?: string | null; title?: string; topic_id?: string };
         Relationships: [{ foreignKeyName: "projects_topic_id_fkey"; columns: ["topic_id"]; isOneToOne: true; referencedRelation: "topics"; referencedColumns: ["id"] }];
       };
       rubric_criteria: {

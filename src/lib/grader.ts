@@ -12,9 +12,13 @@ export interface RubricItem {
 export interface GradeRequest {
   projectTitle: string;
   brief: string | null;
+  hardConstraint: string | null;
   repoUrl: string | null;
   notes: string | null;
   rubric: RubricItem[];
+  /** The actual source, fetched from GitHub. Null when it could not be read. */
+  code: string | null;
+  codeError: string | null;
 }
 
 export interface CriterionScore {
@@ -55,14 +59,26 @@ const GradeSchema = z.object({
 const SYSTEM = `You grade weekly build projects for a self-directed course on building with AI.
 
 You are grading one student who is deliberately holding themselves to a high bar. Be
-accurate rather than encouraging. A project that merely runs is not full marks; full
+accurate rather than encouraging. A project that merely runs is not full marks. Full
 marks means there is genuinely nothing worth changing.
 
-You are given the rubric, the project brief, a repository link and the student's own
-notes. You cannot open the repository, so grade what you can actually see: the notes,
-any code pasted into them, and what the brief asked for. When the notes are too thin to
-judge a criterion, say so in that criterion's comment and score it conservatively rather
-than assuming the best.
+You are given the rubric, the brief, the brief's hard constraint, the student's notes,
+and the actual source code from their repository. Grade the code. The notes are context
+for intent, not evidence. When the code contradicts the notes, the code wins.
+
+The hard constraint is the point of the week. If the code does not genuinely satisfy it,
+"Correct core mechanic" cannot score above half, no matter how polished the rest is.
+Faking it counts as not satisfying it: a retry loop in code is not the same as returning
+an error into the model's context, and a turn counter is not the same as a real stopping
+condition.
+
+Every comment must cite something specific: a file, a function, a line of reasoning about
+what the code actually does. "Good error handling" is a useless comment. "loop.py:44
+catches the timeout and retries in code, where the brief asked for the error to return
+into context" is a useful one.
+
+If the source could not be read, say so plainly in every affected comment and score
+conservatively rather than assuming the best.
 
 Award whole points only, never more than a criterion's maximum. Return one score per
 criterion, in order.`;
@@ -82,9 +98,13 @@ export class AIGrader implements Grader {
     const prompt = [
       `PROJECT: ${req.projectTitle}`,
       req.brief ? `\nBRIEF:\n${req.brief}` : "",
+      req.hardConstraint ? `\nHARD CONSTRAINT (the point of the week):\n${req.hardConstraint}` : "",
       `\nRUBRIC:\n${rubricText}`,
       `\nREPOSITORY: ${req.repoUrl ?? "not provided"}`,
       `\nSTUDENT NOTES:\n${req.notes?.trim() || "(none provided)"}`,
+      req.code
+        ? `\n\nSOURCE CODE:\n${req.code}`
+        : `\n\nSOURCE CODE: could not be read. ${req.codeError ?? ""}`,
     ].join("\n");
 
     const response = await this.client.messages.parse({

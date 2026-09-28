@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getGrader, type RubricItem } from "@/lib/grader";
+import { fetchRepoSnapshot, renderSnapshot } from "@/lib/repo";
 
 /**
  * Grades an existing submission in place. Shared by the server action and the
@@ -17,7 +18,7 @@ export async function gradeSubmission(submissionId: string): Promise<void> {
 
   const { data: project } = await supabase
     .from("projects")
-    .select("title, brief")
+    .select("title, brief, hard_constraint")
     .eq("id", submission.project_id)
     .single();
   if (!project) throw new Error("Project not found");
@@ -49,13 +50,33 @@ export async function gradeSubmission(submissionId: string): Promise<void> {
 
   await supabase.from("submissions").update({ status: "grading" }).eq("id", submissionId);
 
+  // Read the actual code. A failure here is reported to the grader rather than
+  // thrown, so a private or missing repo produces an honest low grade instead
+  // of a crash.
+  let code: string | null = null;
+  let codeError: string | null = null;
+  if (submission.repo_url) {
+    try {
+      const snap = await fetchRepoSnapshot(submission.repo_url);
+      code = snap.files.length > 0 ? renderSnapshot(snap) : null;
+      if (!code) codeError = "The repository contained no readable source files.";
+    } catch (e) {
+      codeError = e instanceof Error ? e.message : "Could not read the repository.";
+    }
+  } else {
+    codeError = "No repository URL was provided.";
+  }
+
   try {
     const result = await grader.grade({
       projectTitle: project.title,
       brief: project.brief,
+      hardConstraint: project.hard_constraint,
       repoUrl: submission.repo_url,
       notes: submission.notes,
       rubric,
+      code,
+      codeError,
     });
 
     await supabase.from("rubric_scores").delete().eq("submission_id", submissionId);

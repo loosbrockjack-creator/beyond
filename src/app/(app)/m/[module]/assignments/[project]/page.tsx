@@ -7,6 +7,7 @@ import { SectionHeader } from "@/components/primitives/Label";
 import { Breadcrumb } from "@/components/nav/Breadcrumb";
 import { RubricBreakdown, type RubricRow } from "@/components/grades/RubricBreakdown";
 import { SubmitForm } from "@/components/SubmitForm";
+import { GenerateBrief } from "@/components/GenerateBrief";
 import { formatDateTime, relativeDue, formatDate } from "@/lib/schedule";
 import { gradeFor } from "@/lib/gpa";
 
@@ -74,10 +75,26 @@ export default async function AssignmentPage({
         <h1 className="mt-3 text-3xl font-medium tracking-[-0.025em] text-ink">
           {view.project.title}
         </h1>
-        <p className="mt-4 max-w-[64ch] text-muted">{view.project.brief}</p>
+        <p className="mt-4 max-w-[64ch] whitespace-pre-line text-muted">{view.project.brief}</p>
+
+        {view.project.hard_constraint ? (
+          <div className="mt-8 border-y border-line py-6">
+            <span className="label">The constraint that matters</span>
+            <p className="mt-3 max-w-[64ch] leading-relaxed text-ink">
+              {view.project.hard_constraint}
+            </p>
+          </div>
+        ) : null}
+
+        {view.project.spine_note ? (
+          <p className="mt-6 max-w-[64ch] text-sm text-muted">
+            <span className="label inline">Fits in</span>{" "}
+            <span className="ml-2">{view.project.spine_note}</span>
+          </p>
+        ) : null}
       </header>
 
-      <div className="mb-14 grid grid-cols-2 border-y border-line sm:grid-cols-3">
+      <div className="mb-14 grid grid-cols-2 border-y border-line sm:grid-cols-4">
         <div className="px-5 py-5">
           <div className="num text-sm text-ink">{formatDate(view.due)}</div>
           <div className="label mt-2">Due</div>
@@ -87,6 +104,12 @@ export default async function AssignmentPage({
             {graded ? "Graded" : submission ? "Submitted" : view.overdue ? "Overdue" : relativeDue(view.due)}
           </div>
           <div className="label mt-2">Status</div>
+        </div>
+        <div className="border-l border-line px-5 py-5">
+          <div className="num text-sm text-ink">
+            {view.project.est_hours ? `${view.project.est_hours} hrs` : "\u2014"}
+          </div>
+          <div className="label mt-2">Budget</div>
         </div>
         <div className="col-span-2 border-t border-line px-5 py-5 sm:col-span-1 sm:border-t-0 sm:border-l">
           <div className="num text-sm">
@@ -130,7 +153,7 @@ export default async function AssignmentPage({
         </div>
       </section>
 
-      <section>
+      <section className="mb-14">
         <SectionHeader>{submission ? "Resubmit" : "Submit"}</SectionHeader>
         <p className="mt-5 mb-6 text-sm text-muted">Due {formatDateTime(view.due)}.</p>
         <SubmitForm
@@ -139,6 +162,15 @@ export default async function AssignmentPage({
           initialRepoUrl={submission?.repo_url ?? ""}
           initialNotes={submission?.notes ?? ""}
         />
+      </section>
+
+      <section>
+        <SectionHeader>Brief</SectionHeader>
+        <p className="mt-5 mb-5 max-w-[62ch] text-xs text-muted">
+          Written from this week&apos;s sources and frozen. Regenerating replaces it and the
+          rubric, so avoid it once you have started building.
+        </p>
+        <GenerateBrief topicId={view.topic.id} regenerate />
       </section>
     </Page>
   );

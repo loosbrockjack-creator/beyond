@@ -75,6 +75,9 @@ export async function fetchRepoSnapshot(url: string): Promise<RepoSnapshot> {
     `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,
     { headers: headers() },
   );
+  if (treeRes.status === 409) {
+    throw new Error("That repository is empty. Push a commit before submitting it.");
+  }
   if (!treeRes.ok) throw new Error(`Could not read the file tree (${treeRes.status})`);
   const tree = await treeRes.json();
 

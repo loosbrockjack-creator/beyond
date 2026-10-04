@@ -85,3 +85,16 @@ bookkeeping only, so it can never become a second source of truth that disagrees
 Supabase project `beyond`, ref `jlafnhtkygcukkbhwndy`. Every table has RLS on.
 Content tables are readable by any signed-in user; progress tables are scoped to
 `auth.uid()`. See `supabase/README.md`.
+
+
+## AI learning system
+
+This repository includes a shared AI learning workflow under `ai-learning/`.
+
+For any task created from the AI learning process, read and follow:
+- `ai-learning/CLAUDE.md`
+- `ai-learning/current-week.md`
+- `ai-learning/tutor-state/current.md`
+- the explicit implementation brief or GitHub issue
+
+Learning files are context only. Do not change product behavior merely because an idea appears in the curriculum, feedback, or tutor state. Implementation requires an explicit brief or issue.

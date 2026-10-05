@@ -4,31 +4,26 @@
 
 **Topic:** Working effectively with AI coding agents
 
-**Status:** Curriculum research pending
+**Status:** Curriculum ready; study not yet recorded as complete
 
-The next action is to run the AI Learning Curator skill in ChatGPT Work.
+**Curriculum:** [Week 02: Working effectively with AI coding agents](weeks/week-02-working-effectively-with-ai-coding-agents.md)
 
-The resulting curriculum should be saved as:
+**Time:** Approximately 120 minutes across five blocks
 
-`ai-learning/weeks/week-02-working-effectively-with-ai-coding-agents.md`
+**Researched:** October 4, 2026
 
-## Research direction
+## Learning focus
 
-The week should focus on durable skills for directing increasingly capable coding agents, not on becoming a traditional developer.
+- Delegate outcomes and reassess old instructions.
+- Write clear briefs with relevant context and acceptance checks.
+- Preserve useful project state across sessions.
+- Verify results and diagnose failures using evidence.
+- Practice a small build-and-verification loop.
 
-Important areas:
-- specifying outcomes and constraints,
-- planning before execution,
-- giving useful context,
-- decomposing larger tasks,
-- verification and testing,
-- debugging with agents,
-- deciding what remains a human responsibility,
-- understanding which skills become more valuable as coding itself becomes more automated.
+## Next action
 
-Avoid turning the week into:
-- a Python course,
-- a Git tutorial,
-- SDK reference reading,
-- syntax memorization,
-- framework setup.
+Study Block 1 of the linked curriculum, then continue in order. Use the normal tutor chat for questions and reflection.
+
+Say "Sync learning state" to update the tutor state after studying. Say "Implement this" when a learning concept should become an explicit Beyond implementation brief or GitHub issue.
+
+The curriculum's checklist prototype is a separate practice exercise. It does not authorize changes to the Beyond application.

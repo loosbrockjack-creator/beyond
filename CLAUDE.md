@@ -95,6 +95,10 @@ For any task created from the AI learning process, read and follow:
 - `ai-learning/CLAUDE.md`
 - `ai-learning/current-week.md`
 - `ai-learning/tutor-state/current.md`
-- the explicit implementation brief or GitHub issue
+- the authoritative implementation source for the task
 
-Learning files are context only. Do not change product behavior merely because an idea appears in the curriculum, feedback, or tutor state. Implementation requires an explicit brief or issue.
+For required weekly projects, the authoritative project brief is the non-placeholder row in Supabase `projects` for the current week's topic, plus its `rubric_criteria`. Do not expect a separate project file in GitHub.
+
+For optional learning implementations, use the explicit implementation brief or GitHub issue.
+
+Learning files are context only. Do not change product behavior merely because an idea appears in the curriculum, feedback, or tutor state. Implementation requires either a generated weekly project in Supabase or an explicit implementation brief / GitHub issue.

@@ -28,7 +28,9 @@ The tutor should:
 - answer questions about the current material,
 - identify durable misconceptions and insights,
 - avoid saving full chat transcripts,
+- follow `ai-learning/tutor-instructions.md` as the permanent Tutor command specification,
 - update `ai-learning/tutor-state/current.md` when the user says "Sync learning state",
+- generate the adaptive weekly project directly into Beyond when the user says "Generate weekly project",
 - create an implementation brief or GitHub issue when the user says "Implement this".
 
 ### Claude: implementation
@@ -53,11 +55,13 @@ For learning-driven implementation work, Claude should read:
 3. Study the material.
 4. Ask questions in the ChatGPT tutor.
 5. Say "Sync learning state" when useful.
-6. Say "Implement this" when a concept should be applied to Beyond.
-7. Create a GitHub issue using the AI learning implementation template.
-8. Claude investigates, implements, tests, and opens a PR.
-9. Review Claude's result with the tutor and connect it back to the concept.
-10. Feed that experience into the next week's feedback.
+6. At the end of the learning week, say "Generate weekly project".
+7. The Tutor uses the curriculum + tutor-state to write the personalized project into Beyond.
+8. Complete the project with Claude while keeping the learner responsible for important judgment calls.
+9. Review the result with the Tutor and sync any new understanding.
+10. Complete the weekly quiz and pass the gate.
+11. Say "Implement this" separately whenever a learning insight should become an optional product improvement.
+12. Feed the week's experience into the next curriculum cycle.
 
 ## Source of truth
 

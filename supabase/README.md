@@ -67,3 +67,24 @@ weighted toward whatever was recalled worst.
 Session 7 is a YouTube talk and has no recall, so it offers "Mark as read"
 instead. Questions were written against the fetched text of each source rather
 than from memory; the video could not be read, so none were invented for it.
+
+## Week 2 content (seeded 2026-10-05)
+
+Week 2 is seeded from `ai-learning/weeks/week-02-working-effectively-with-ai-coding-agents.md`,
+which is the source of record rather than a separate sources file. Its five blocks map
+one to one onto five sessions, and the topic was retitled from "AI-Assisted Coding" to
+match the curriculum. The slug, number and week stay as they were.
+
+| Migration | What |
+|---|---|
+| seed_week2_sessions | Topic retitle plus 5 sessions, one per block |
+| seed_week2_recalls | 12 recalls across sessions 2 to 5, with their options |
+| seed_week2_quiz_pool | Weekly quiz plus 12 pooled questions tagged by session |
+
+Session 1 is the Y Combinator talk and has no recall, so it offers "Mark as read",
+the same treatment week 1 gives its video. Sessions 3, 4 and 5 each open with one
+question carried from the session before. Questions were written against the fetched
+text of each source; nothing was written for the video, which could not be read.
+
+Block 5 is the week's build loop, so the project covers it. That project row was
+written by the ChatGPT tutor on 2026-10-06 and is left alone here.

@@ -15,7 +15,7 @@ const POLICIES = [
   },
   {
     label: "Projects",
-    body: "One build per week, due Friday at 11:59pm. Each is scored out of 100 against a five-part rubric by an AI grader, which returns per-criterion scores and written feedback. Projects are graded but never gate the next topic.",
+    body: "One build per week, due Sunday at 11:59pm, the same deadline as the weekly quiz. Each is scored out of 100 against a five-part rubric by an AI grader, which returns per-criterion scores and written feedback. Projects are graded but never gate the next topic.",
   },
   {
     label: "Pace",

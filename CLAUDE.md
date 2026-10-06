@@ -6,9 +6,10 @@ A personal 16 week course for learning to build with AI, structured like Canvas.
 Four modules of four topics. One build project per week. A quiz per topic that must be
 passed at 100% before the next topic opens.
 
-Currently a **skeleton prototype**: the structure, navigation, design system, and the
-quiz / gating / grading logic are all real. The quiz questions and project briefs are
-placeholders, flagged with `is_placeholder` in the database.
+The structure, navigation, design system, and the quiz / gating / grading logic are all
+real. Weeks 1 and 2 have real content: sessions, recalls, a weekly quiz pool, and a
+graded project. Weeks 3 to 16 are empty and fill in one week at a time. Anything still
+unwritten is flagged `is_placeholder` in the database.
 
 ## Running it
 
@@ -64,7 +65,9 @@ Three pure modules with no Supabase imports, so they stay testable and cannot dr
 
 - `src/lib/gating.ts` - what unlocks what. The only place this is expressed.
 - `src/lib/gpa.ts` - score to letter to points, 4.0 scale.
-- `src/lib/schedule.ts` - week to dates, including the holiday break.
+- `src/lib/schedule.ts` - week to dates, including the holiday break. The project and
+  the weekly quiz share one deadline, Sunday at 11:59pm. Week 1 was extended by a week,
+  which lives in `DUE_WEEK_OVERRIDE` rather than being scattered through the pages.
 
 `src/lib/course.ts` loads everything and derives every status. **Topic status is always
 derived from quiz attempts**, never read from `topic_progress.status`. That table is

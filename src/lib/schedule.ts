@@ -23,24 +23,30 @@ export function weekStart(startDate: string, week: number): Date {
   return d;
 }
 
-/** Projects are due Friday at 11:59pm of their week. */
-export function projectDue(startDate: string, week: number): Date {
-  const d = weekStart(startDate, week);
-  d.setDate(d.getDate() + 4);
+/**
+ * Weeks whose work was extended, mapped to the week whose Sunday they now land on.
+ * Week 1 was given a second week, so it is due alongside week 2.
+ */
+const DUE_WEEK_OVERRIDE: Record<number, number> = { 1: 2 };
+
+/**
+ * Everything in a week is due Sunday at 11:59pm, the end of that week. The project
+ * and the quiz share one deadline, so there is only one date to remember.
+ * Sessions themselves never have a deadline.
+ */
+function dueSunday(startDate: string, week: number): Date {
+  const d = weekStart(startDate, DUE_WEEK_OVERRIDE[week] ?? week);
+  d.setDate(d.getDate() + 6);
   d.setHours(23, 59, 0, 0);
   return d;
 }
 
-/**
- * The weekly quiz is due Sunday at 11:59pm, at the end of its week. It sits
- * after the project because it draws on every session in the week.
- * Sessions themselves never have a deadline.
- */
+export function projectDue(startDate: string, week: number): Date {
+  return dueSunday(startDate, week);
+}
+
 export function quizDue(startDate: string, week: number): Date {
-  const d = weekStart(startDate, week);
-  d.setDate(d.getDate() + 6);
-  d.setHours(23, 59, 0, 0);
-  return d;
+  return dueSunday(startDate, week);
 }
 
 export function currentWeek(startDate: string, now: Date = new Date()): number {

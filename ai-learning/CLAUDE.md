@@ -14,6 +14,24 @@ Do not modify product behavior simply because a concept, idea, or question appea
 
 Implementation requires an explicit implementation brief or GitHub issue.
 
+## Weekly project implementation
+
+When the user asks you to implement the current or previous required weekly project, do not search the repository for a generated project file.
+
+The ChatGPT Tutor writes generated weekly projects directly into the Beyond Supabase database. Treat the database row as the authoritative project brief.
+
+Use Supabase project `jlafnhtkygcukkbhwndy` and:
+
+1. Read `ai-learning/current-week.md` to determine the week.
+2. Find the matching row in `topics` by `week_number`.
+3. Read the non-placeholder `projects` row for that `topic_id`.
+4. Read the related `rubric_criteria`, ordered by `order_index`.
+5. Implement that project in the Beyond application unless the brief explicitly says it is a standalone practice artifact.
+6. Do not rewrite or replace the project brief or rubric unless the user explicitly asks.
+7. If no non-placeholder project exists for that week, say so instead of inventing one.
+
+A generated weekly project in Supabase counts as the explicit implementation brief for that required weekly project.
+
 ## When handling an AI learning implementation
 
 Read, in this order:

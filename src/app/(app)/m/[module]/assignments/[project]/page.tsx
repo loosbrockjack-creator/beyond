@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ArrowRight } from "lucide-react";
 import { loadCourse, findModule, findTopic } from "@/lib/course";
 import { createClient } from "@/lib/supabase/server";
 import { Page } from "@/components/primitives/Page";
@@ -9,6 +10,8 @@ import { RubricBreakdown, type RubricRow } from "@/components/grades/RubricBreak
 import { SubmitForm } from "@/components/SubmitForm";
 import { GenerateBrief } from "@/components/GenerateBrief";
 import { formatDateTime, relativeDue, formatDate } from "@/lib/schedule";
+import { Button } from "@/components/primitives/Button";
+import { labForTopic } from "@/lib/labs";
 import { gradeFor } from "@/lib/gpa";
 
 export default async function AssignmentPage({
@@ -25,6 +28,8 @@ export default async function AssignmentPage({
   if (view.status === "locked") {
     redirect(`/m/${moduleSlug}/topics/${topicSlug}`);
   }
+
+  const lab = labForTopic(topicSlug);
 
   const supabase = await createClient();
   const { data: criteria } = await supabase
@@ -91,6 +96,17 @@ export default async function AssignmentPage({
             <span className="label inline">Fits in</span>{" "}
             <span className="ml-2">{view.project.spine_note}</span>
           </p>
+        ) : null}
+
+        {lab ? (
+          <div className="mt-8">
+            <Link href={`/m/${moduleSlug}/topics/${topicSlug}/lab`}>
+              <Button variant="secondary">
+                Open {lab.title}
+                <ArrowRight className="size-3.5" />
+              </Button>
+            </Link>
+          </div>
         ) : null}
       </header>
 

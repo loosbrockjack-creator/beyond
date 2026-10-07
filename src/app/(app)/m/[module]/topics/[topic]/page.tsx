@@ -12,6 +12,7 @@ import { AttemptHistory } from "@/components/quiz/AttemptHistory";
 import { formatDate, formatDateTime, relativeDue } from "@/lib/schedule";
 import { SessionList } from "@/components/SessionList";
 import { GenerateBrief } from "@/components/GenerateBrief";
+import { labForTopic } from "@/lib/labs";
 
 export default async function TopicPage({
   params,
@@ -24,6 +25,7 @@ export default async function TopicPage({
   const view = findTopic(course, topicSlug);
   if (!moduleView || !view) notFound();
 
+  const lab = labForTopic(topicSlug);
   const locked = view.status === "locked";
   const passed = view.status === "complete";
   const prev = course.topics.find((t) => t.topic.number === view.topic.number - 1);
@@ -181,13 +183,21 @@ export default async function TopicPage({
             </p>
 
             {!locked ? (
-              <div className="mt-6">
+              <div className="mt-6 flex flex-wrap gap-3">
                 <Link href={`/m/${moduleSlug}/assignments/${topicSlug}`}>
                   <Button variant="secondary">
                     {view.submission ? "View submission" : "Open project"}
                     <ArrowRight className="size-3.5" />
                   </Button>
                 </Link>
+                {lab ? (
+                  <Link href={`/m/${moduleSlug}/topics/${topicSlug}/lab`}>
+                    <Button variant="secondary">
+                      {lab.title}
+                      <ArrowRight className="size-3.5" />
+                    </Button>
+                  </Link>
+                ) : null}
               </div>
             ) : null}
           </div>

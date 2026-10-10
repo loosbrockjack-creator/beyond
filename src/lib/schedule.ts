@@ -1,12 +1,18 @@
 /**
  * Week and due-date math. Pure: no Supabase, no React.
  *
- * The course runs 16 weeks from a Monday start. Weeks 14 to 16 are pushed back by a
- * two-week holiday break so nothing lands on Christmas or New Year's Day.
+ * The course runs 16 topics, each topic now spanning two calendar weeks: a learn week
+ * (sessions, recalls, the quiz) followed by a build week (the project). Topic 1 is the
+ * exception: it already ran its learn phase across two calendar weeks before this
+ * cadence existed, so its block is learn, learn, build (3 calendar weeks) instead of
+ * every later topic's learn, build (2 calendar weeks).
+ *
+ * Calendar weeks are pushed back by a two-week holiday break after calendar week 13
+ * (the week whose Sunday is Dec 27) so nothing is due during Christmas or New Year's.
  */
 
 export const WEEKS_TOTAL = 16;
-const BREAK_AFTER_WEEK = 13;
+const BREAK_AFTER_CAL_WEEK = 13;
 const BREAK_WEEKS = 2;
 
 /** Parse a 'YYYY-MM-DD' date column at local noon, which is immune to DST shifts. */
@@ -15,38 +21,54 @@ function parseISODate(iso: string): Date {
   return new Date(y, m - 1, d, 12, 0, 0, 0);
 }
 
-export function weekStart(startDate: string, week: number): Date {
+/**
+ * Topic `n`'s learn week starts here (calendar week, 1-indexed, before the holiday
+ * break is applied). Topic 1 keeps the extra learn week it was already given; every
+ * topic after it gets exactly one learn week followed by one build week.
+ */
+function learnStartCalWeek(topicWeek: number): number {
+  return topicWeek === 1 ? 1 : 2 * topicWeek;
+}
+
+/** The calendar week topic `n`'s quiz is due at the end of. */
+function learnDueCalWeek(topicWeek: number): number {
+  return topicWeek === 1 ? 2 : 2 * topicWeek;
+}
+
+/** The calendar week topic `n`'s build (project) week falls on. */
+function buildCalWeek(topicWeek: number): number {
+  return topicWeek === 1 ? 3 : 2 * topicWeek + 1;
+}
+
+function calWeekStart(startDate: string, calWeek: number): Date {
   const d = parseISODate(startDate);
-  const offsetWeeks = week - 1 + (week > BREAK_AFTER_WEEK ? BREAK_WEEKS : 0);
+  const offsetWeeks = calWeek - 1 + (calWeek > BREAK_AFTER_CAL_WEEK ? BREAK_WEEKS : 0);
   d.setDate(d.getDate() + offsetWeeks * 7);
   d.setHours(0, 0, 0, 0);
   return d;
 }
 
-/**
- * Weeks whose work was extended, mapped to the week whose Sunday they now land on.
- * Week 1 was given a second week, so it is due alongside week 2.
- */
-const DUE_WEEK_OVERRIDE: Record<number, number> = { 1: 2 };
-
-/**
- * Everything in a week is due Sunday at 11:59pm, the end of that week. The project
- * and the quiz share one deadline, so there is only one date to remember.
- * Sessions themselves never have a deadline.
- */
-function dueSunday(startDate: string, week: number): Date {
-  const d = weekStart(startDate, DUE_WEEK_OVERRIDE[week] ?? week);
+/** Everything in a calendar week is due Sunday at 11:59pm, the end of that week. */
+function calWeekDueSunday(startDate: string, calWeek: number): Date {
+  const d = calWeekStart(startDate, calWeek);
   d.setDate(d.getDate() + 6);
   d.setHours(23, 59, 0, 0);
   return d;
 }
 
-export function projectDue(startDate: string, week: number): Date {
-  return dueSunday(startDate, week);
+/** The Monday topic `week`'s learn phase begins. */
+export function weekStart(startDate: string, week: number): Date {
+  return calWeekStart(startDate, learnStartCalWeek(week));
 }
 
+/** The project deadline: the Sunday at the end of topic `week`'s build week. */
+export function projectDue(startDate: string, week: number): Date {
+  return calWeekDueSunday(startDate, buildCalWeek(week));
+}
+
+/** The quiz deadline: the Sunday at the end of topic `week`'s learn week. */
 export function quizDue(startDate: string, week: number): Date {
-  return dueSunday(startDate, week);
+  return calWeekDueSunday(startDate, learnDueCalWeek(week));
 }
 
 export function currentWeek(startDate: string, now: Date = new Date()): number {

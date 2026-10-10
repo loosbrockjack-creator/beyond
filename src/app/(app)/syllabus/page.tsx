@@ -15,11 +15,11 @@ const POLICIES = [
   },
   {
     label: "Projects",
-    body: "One build per week, due Sunday at 11:59pm, the same deadline as the weekly quiz. Each is scored out of 100 against a five-part rubric by an AI grader, which returns per-criterion scores and written feedback. Projects are graded but never gate the next topic.",
+    body: "One build per topic, due Sunday at 11:59pm at the end of that topic's build week, a week after the quiz deadline. Each is scored out of 100 against a five-part rubric by an AI grader, which returns per-criterion scores and written feedback. Projects are graded but never gate the next topic.",
   },
   {
     label: "Pace",
-    body: "Sixteen weeks, sixteen topics, sixteen builds. Weeks 1 to 13 run straight through; a two week break then pushes the last three weeks past the holidays.",
+    body: "Sixteen topics, sixteen builds, each topic a learn week followed by a build week. A two week break keeps the turn of the year off Christmas and New Year's Day.",
   },
 ];
 
@@ -27,6 +27,7 @@ export default async function SyllabusPage() {
   const course = await loadCourse();
   const first = weekStart(course.startDate, 1);
   const last = projectDue(course.startDate, WEEKS_TOTAL);
+  const totalCalendarWeeks = Math.round((last.getTime() - first.getTime()) / (7 * 24 * 60 * 60 * 1000));
 
   return (
     <Page>
@@ -37,7 +38,7 @@ export default async function SyllabusPage() {
       />
 
       <div className="mb-14 grid grid-cols-2 border-y border-line sm:grid-cols-4">
-        <Cell value={String(WEEKS_TOTAL)} label="Weeks" />
+        <Cell value={String(totalCalendarWeeks)} label="Weeks" />
         <Cell value="16" label="Topics" divided />
         <Cell value="16" label="Builds" divided />
         <Cell value="100%" label="To pass" divided />

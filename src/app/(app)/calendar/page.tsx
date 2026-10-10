@@ -14,7 +14,7 @@ export default async function CalendarPage() {
       <PageTitle
         label="Course"
         title="Calendar"
-        lead="Sixteen weeks, one build each. A two week break over the holidays keeps weeks 14 and 15 off Christmas and New Year's Day."
+        lead="Sixteen topics, each a learn week followed by a build week. A two week break over the holidays keeps the turn of the year off Christmas and New Year's Day."
       />
 
       {course.modules.map((m) => (

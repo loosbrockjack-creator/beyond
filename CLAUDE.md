@@ -100,7 +100,9 @@ For any task created from the AI learning process, read and follow:
 - `ai-learning/tutor-state/current.md`
 - the authoritative implementation source for the task
 
-For required weekly projects, the authoritative project brief is the non-placeholder row in Supabase `projects` for the current week's topic, plus its `rubric_criteria`. Do not expect a separate project file in GitHub.
+For required weekly projects, start with the non-placeholder row in Supabase `projects` for the **specified week** and its `rubric_criteria` (do not assume it is always `current-week.md`). Some approved projects also have a detailed GitHub brief: if `generated_from.repo_brief` is set, read that exact file and verify its title/week matches the Supabase row. Treat the file as the detailed build brief and the Supabase row/rubric as the app-facing record. Stop and ask if these conflict.
+
+**Week 1 exception:** The active project is `AI Internship Intelligence Agent`, documented in `ai-learning/projects/week-01-internship-intelligence-agent.md` and mirrored in Supabase. The earlier `Agent or Workflow? Decision Lab` is historical completed work, not an active assignment. Its completion note at `ai-learning/implementation/completed/week-01-agent-or-workflow-decision-lab.md` must not be used as the new project brief. The new Week 1 prototype is explicitly standalone; do not repurpose the existing lab or add it to the Beyond app without approval.
 
 For optional learning implementations, use the explicit implementation brief or GitHub issue.
 

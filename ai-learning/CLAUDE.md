@@ -16,21 +16,28 @@ Implementation requires an explicit implementation brief or GitHub issue.
 
 ## Weekly project implementation
 
-When the user asks you to implement the current or previous required weekly project, do not search the repository for a generated project file.
-
-The ChatGPT Tutor writes generated weekly projects directly into the Beyond Supabase database. Treat the database row as the authoritative project brief.
+The ChatGPT Tutor maintains **one active project per topic** in the Beyond Supabase database. Some approved projects also have a more detailed GitHub implementation brief. Do not confuse historical implementation completion notes with the active project.
 
 Use Supabase project `jlafnhtkygcukkbhwndy` and:
 
-1. Read `ai-learning/current-week.md` to determine the week.
-2. Find the matching row in `topics` by `week_number`.
-3. Read the non-placeholder `projects` row for that `topic_id`.
-4. Read the related `rubric_criteria`, ordered by `order_index`.
-5. Implement that project in the Beyond application unless the brief explicitly says it is a standalone practice artifact.
-6. Do not rewrite or replace the project brief or rubric unless the user explicitly asks.
-7. If no non-placeholder project exists for that week, say so instead of inventing one.
+1. Respect the **week explicitly requested by the learner**, even if `ai-learning/current-week.md` points at a later learning week.
+2. Find the `topics` row by `week_number`.
+3. Read the matching non-placeholder `projects` row and related `rubric_criteria` sorted by `order_index`.
+4. If the project row's `generated_from.repo_brief` is present, read **that exact path**. It is the detailed approved scope. Check that the GitHub title/week and Supabase title/week refer to the same active project. If they disagree, stop rather than improvising.
+5. Inspect the existing application and connected tools before proposing implementation.
+6. Respect any pre-implementation learner checkpoint in the brief: show the plan and **wait for the learner to approve it** before writing code.
+7. Follow the brief's placement (standalone prototype vs. application integration); don't force a standalone experiment into Beyond's existing UI.
+8. Do not replace any project, rubric, course order, or unrelated records while implementing.
+9. If no active project is found, say so instead of inventing one.
 
-A generated weekly project in Supabase counts as the explicit implementation brief for that required weekly project.
+### Historical Week 1 boundary
+
+Active project: **AI Internship Intelligence Agent**.
+- Detailed brief: `ai-learning/projects/week-01-internship-intelligence-agent.md`
+- Its Supabase row and rubric are the matching active Week 1 assignment.
+- The old **Agent or Workflow? Decision Lab** is already implemented, but is **historical**, not the new assignment.
+- Its completion note (`ai-learning/implementation/completed/week-01-agent-or-workflow-decision-lab.md`) must remain intact as historical documentation, not be interpreted as a new task.
+- Do not extend or repurpose the old lab for the internship project. If old lab links appear on the same Week 1 project pages and risk confusion, **flag a narrowly scoped separation fix for approval** rather than silently deleting existing functionality.
 
 ## When handling an AI learning implementation
 

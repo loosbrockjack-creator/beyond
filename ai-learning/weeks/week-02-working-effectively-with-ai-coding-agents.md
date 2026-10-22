@@ -54,29 +54,29 @@ Direct a coding agent from a clear brief through a verified result, recognize wh
 - What information belongs in the brief?
 - When would planning add value, and when would it add overhead?
 
-## Block 3: Keep work coherent across sessions
+## Block 3: Keep project knowledge usable across sessions
 
 **Time:** 20 min  
-**Objective:** Understand how useful project state survives beyond one conversation.
+**Objective:** Understand how organized repository knowledge helps a fresh coding agent resume work without relying on the original conversation.
 
-**Resource:** [Effective harnesses for long-running agents, Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)  
+**Resource:** [Harness engineering: leveraging Codex in an agent-first world, OpenAI](https://openai.com/index/harness-engineering/)  
 **Type:** Article  
-**Published/updated:** November 26, 2025.
+**Published/updated:** February 11, 2026.
 
 **Use it like this:**
 
-- Read the introduction, **“The long-running agent problem,” “Feature list,” “Incremental progress,”** and **“Getting up to speed.”**
-- Skip the SDK links, code snippets, “Testing,” and “Future work.” Focus on requirements, progress, and handoffs.
-- Budget 10 minutes to read and 10 to sketch a handoff containing: goal, current state, decisions, evidence, and next step.
-- Apply it to the setup you already have: explain the different jobs of the weekly curriculum, current-week pointer, tutor state, and implementation brief.
-- Treat the article's specific session structure as one experiment. Keep the underlying lesson about explicit state; reconsider the scaffolding as models improve.
+- Read **“We made repository knowledge the system of record”** and **“Agent legibility is the goal.”** Skim **“Increasing application legibility”** for a practical example.
+- Spend about 12 minutes reading and 8 minutes mapping how your own Beyond setup gives an agent the context it needs.
+- On that map, give each file a one-line purpose: `CLAUDE.md`, `ai-learning/current-week.md`, the weekly curriculum, `ai-learning/tutor-state/current.md`, and an implementation brief.
+- Identify one piece of important context that would be lost if it lived only in this week's chat. Decide where it should be recorded, and why.
+- Focus on the distinction between a short entry-point map and detailed source documents; skip implementation-specific infrastructure and tooling.
 
-**Why it matters:** A future session needs a reliable account of the work, especially when the original conversation is unavailable.
+**Why it matters:** An agent can work across sessions more reliably when critical decisions and current state are discoverable in the repository rather than buried in old conversations or oversized instructions.
 
 **Finish able to explain:**
 
-- What should a fresh agent know before continuing?
-- How do you distinguish a requirement, completed work, and an untested assumption?
+- Why is a concise map to trusted files often better than one enormous instruction file?
+- What should a fresh agent read to distinguish requirements, current progress, and assumptions?
 
 ## Block 4: Judge results and diagnose failures
 
@@ -170,4 +170,4 @@ Each block includes its reading or viewing and its exercise. The completion chec
 
 ## Source selection note
 
-Researched and checked October 4, 2026. The dated selections are from July 2026, March 2026, and November 2025, all within the preceding 12 months. The undated Anthropic guide was checked live and only its explanatory sections are assigned. Four distinct resources serve five blocks; the guide is reused for separate lessons. The November article teaches continuity of project state, while the newer material shows why model-specific scaffolding should be re-evaluated. Exercises and acceptance checks are original curriculum activities.
+Researched and checked October 4, 2026. The dated selections are from July 2026, March 2026, and February 2026, all within the preceding 12 months. The undated Anthropic guide was checked live and only its explanatory sections are assigned. Four distinct resources serve five blocks; the guide is reused for separate lessons. The February OpenAI article teaches continuity through repository knowledge and agent-legible context, while the other material explores how scaffolding and verification should evolve as models improve. Exercises and acceptance checks are original curriculum activities.

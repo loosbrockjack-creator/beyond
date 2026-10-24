@@ -106,3 +106,55 @@ export async function submitQuizAttempt(
   revalidatePath("/", "layout");
   return { score, passed, attemptNumber, correct, explanations };
 }
+
+export interface AttemptReview {
+  questions: { id: string; prompt: string; options: { id: string; label: string }[] }[];
+  answers: Record<string, string>;
+  correct: Record<string, string>;
+  explanations: Record<string, string | null>;
+}
+
+/**
+ * Reconstructs what a past attempt looked like, for the review UI in attempt
+ * history. `quiz_attempts.answers` is the only thing saved per attempt, so
+ * this rejoins it against the current question/option rows to get prompts,
+ * labels, and the correct answer.
+ */
+export async function getAttemptReview(attemptId: string): Promise<AttemptReview> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not signed in");
+
+  const { data: attempt, error: attemptError } = await supabase
+    .from("quiz_attempts")
+    .select("answers, user_id")
+    .eq("id", attemptId)
+    .single();
+  if (attemptError || !attempt) throw new Error("Attempt not found");
+  if (attempt.user_id !== user.id) throw new Error("Not your attempt");
+
+  const answers = (attempt.answers ?? {}) as Record<string, string>;
+  const questionIds = Object.keys(answers);
+
+  const { data: rows, error: qError } = await supabase
+    .from("quiz_questions")
+    .select("id, prompt, explanation, order_index, quiz_options(id, label, is_correct, order_index)")
+    .in("id", questionIds);
+  if (qError || !rows) throw new Error("Could not load questions");
+
+  const sorted = [...rows].sort((a, b) => a.order_index - b.order_index);
+
+  const correct: Record<string, string> = {};
+  const explanations: Record<string, string | null> = {};
+  const questions: AttemptReview["questions"] = [];
+
+  for (const q of sorted) {
+    const options = [...q.quiz_options].sort((a, b) => a.order_index - b.order_index);
+    const right = options.find((o) => o.is_correct);
+    if (right) correct[q.id] = right.id;
+    explanations[q.id] = q.explanation;
+    questions.push({ id: q.id, prompt: q.prompt, options: options.map((o) => ({ id: o.id, label: o.label })) });
+  }
+
+  return { questions, answers, correct, explanations };
+}

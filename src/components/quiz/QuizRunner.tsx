@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, X, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/primitives/Button";
 import { submitQuizAttempt, type AttemptResult } from "@/lib/actions/quiz";
+import { QuizReview } from "@/components/quiz/QuizReview";
 import { cn } from "@/lib/cn";
 
 export interface RunnerQuestion {
@@ -202,7 +203,7 @@ function Result({
   topicHref: string;
   onRetake: () => void;
 }) {
-  const wrong = questions.filter((q) => answers[q.id] !== result.correct[q.id]);
+  const wrongCount = questions.filter((q) => answers[q.id] !== result.correct[q.id]).length;
 
   return (
     <div>
@@ -223,39 +224,21 @@ function Result({
           : `You need ${passThreshold}% to unlock the next topic. Retake it as many times as you want, the attempts are all recorded.`}
       </p>
 
-      {wrong.length > 0 ? (
+      {wrongCount > 0 ? (
         <section className="mt-12">
           <div className="flex items-center gap-4">
-            <span className="label shrink-0">Missed {wrong.length}</span>
+            <span className="label shrink-0">Missed {wrongCount}</span>
             <span className="h-px flex-1 bg-line" aria-hidden="true" />
           </div>
 
-          <ul className="mt-6 flex flex-col gap-8">
-            {wrong.map((q) => {
-              const chosen = q.options.find((o) => o.id === answers[q.id]);
-              const right = q.options.find((o) => o.id === result.correct[q.id]);
-              return (
-                <li key={q.id}>
-                  <p className="text-sm font-medium text-ink">{q.prompt}</p>
-                  <div className="mt-3 flex flex-col gap-2">
-                    <span className="flex items-start gap-2.5 text-sm text-muted">
-                      <X className="mt-0.5 size-3.5 shrink-0 text-faint" aria-label="Your answer" />
-                      {chosen?.label}
-                    </span>
-                    <span className="flex items-start gap-2.5 text-sm text-ink">
-                      <Check className="mt-0.5 size-3.5 shrink-0 text-accent" aria-label="Correct answer" />
-                      {right?.label}
-                    </span>
-                  </div>
-                  {result.explanations[q.id] ? (
-                    <p className="mt-3 max-w-[62ch] text-xs text-muted">
-                      {result.explanations[q.id]}
-                    </p>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
+          <div className="mt-6">
+            <QuizReview
+              questions={questions}
+              answers={answers}
+              correct={result.correct}
+              explanations={result.explanations}
+            />
+          </div>
         </section>
       ) : null}
 

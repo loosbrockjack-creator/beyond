@@ -67,11 +67,17 @@ export function nextAttemptNumber(existingAttempts: number): number {
   return existingAttempts + 1;
 }
 
+/**
+ * Scores only the questions the user was actually presented with (the keys of
+ * `answers`), not every question in the quiz's full pool. Each attempt draws a
+ * subset of the pool (see quizpool.ts), so grading against the whole pool would
+ * count every question outside that subset as wrong.
+ */
 export function scoreQuiz(
   answers: Record<string, string>,
   correctByQuestion: Record<string, string>,
 ): number {
-  const ids = Object.keys(correctByQuestion);
+  const ids = Object.keys(answers).filter((qid) => qid in correctByQuestion);
   if (ids.length === 0) return 0;
   const right = ids.filter((qid) => answers[qid] === correctByQuestion[qid]).length;
   return Math.round((right / ids.length) * 100);

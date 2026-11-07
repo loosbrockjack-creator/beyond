@@ -3,7 +3,7 @@ import { Lock } from "lucide-react";
 import { loadCourse } from "@/lib/course";
 import { Page, PageTitle } from "@/components/primitives/Page";
 import { SectionHeader } from "@/components/primitives/Label";
-import { weekStart, projectDue, formatDate } from "@/lib/schedule";
+import { weekStart, projectDue, formatDate, topicForWeek } from "@/lib/schedule";
 import { cn } from "@/lib/cn";
 
 export default async function CalendarPage() {
@@ -28,7 +28,7 @@ export default async function CalendarPage() {
               const start = weekStart(course.startDate, t.topic.week_number);
               const due = projectDue(course.startDate, t.topic.week_number);
               const locked = t.status === "locked";
-              const isCurrent = t.topic.week_number === course.week;
+              const isCurrent = t.topic.week_number === topicForWeek(course.week);
 
               const row = (
                 <div className="grid grid-cols-[1.5rem_1fr_auto] items-center gap-x-5 py-4">

@@ -1,18 +1,18 @@
 /**
  * Week and due-date math. Pure: no Supabase, no React.
  *
- * The course runs 16 topics, each topic now spanning two calendar weeks: a learn week
- * (sessions, recalls, the quiz) followed by a build week (the project). Topic 1 is the
- * exception: it already ran its learn phase across two calendar weeks before this
- * cadence existed, so its block is learn, learn, build (3 calendar weeks) instead of
- * every later topic's learn, build (2 calendar weeks).
+ * The course runs 16 topics, each spanning exactly two calendar weeks: a learn week
+ * (sessions, recalls, the quiz) followed by a build week (the project). That's 32
+ * calendar weeks total, which is what gets shown to the user as "the current week."
  *
- * Calendar weeks are pushed back by a two-week holiday break after calendar week 13
- * (the week whose Sunday is Dec 27) so nothing is due during Christmas or New Year's.
+ * Calendar weeks are pushed back by a two-week holiday break after calendar week 10
+ * (the end of topic 5's build week, Sunday Dec 20 for the current start date) so
+ * nothing is due during Christmas or New Year's.
  */
 
-export const WEEKS_TOTAL = 16;
-const BREAK_AFTER_CAL_WEEK = 13;
+export const WEEKS_TOTAL = 32;
+export const TOPICS_TOTAL = 16;
+const BREAK_AFTER_CAL_WEEK = 10;
 const BREAK_WEEKS = 2;
 
 /** Parse a 'YYYY-MM-DD' date column at local noon, which is immune to DST shifts. */
@@ -21,23 +21,15 @@ function parseISODate(iso: string): Date {
   return new Date(y, m - 1, d, 12, 0, 0, 0);
 }
 
-/**
- * Topic `n`'s learn week starts here (calendar week, 1-indexed, before the holiday
- * break is applied). Topic 1 keeps the extra learn week it was already given; every
- * topic after it gets exactly one learn week followed by one build week.
- */
-function learnStartCalWeek(topicWeek: number): number {
-  return topicWeek === 1 ? 1 : 2 * topicWeek;
-}
-
-/** The calendar week topic `n`'s quiz is due at the end of. */
-function learnDueCalWeek(topicWeek: number): number {
-  return topicWeek === 1 ? 2 : 2 * topicWeek;
+/** The calendar week (1-indexed, before the holiday break is applied) topic `n`'s
+ * learn phase runs in, and its quiz is due at the end of. */
+function learnCalWeek(topicWeek: number): number {
+  return 2 * topicWeek - 1;
 }
 
 /** The calendar week topic `n`'s build (project) week falls on. */
 function buildCalWeek(topicWeek: number): number {
-  return topicWeek === 1 ? 3 : 2 * topicWeek + 1;
+  return 2 * topicWeek;
 }
 
 function calWeekStart(startDate: string, calWeek: number): Date {
@@ -58,7 +50,7 @@ function calWeekDueSunday(startDate: string, calWeek: number): Date {
 
 /** The Monday topic `week`'s learn phase begins. */
 export function weekStart(startDate: string, week: number): Date {
-  return calWeekStart(startDate, learnStartCalWeek(week));
+  return calWeekStart(startDate, learnCalWeek(week));
 }
 
 /** The project deadline: the Sunday at the end of topic `week`'s build week. */
@@ -68,14 +60,20 @@ export function projectDue(startDate: string, week: number): Date {
 
 /** The quiz deadline: the Sunday at the end of topic `week`'s learn week. */
 export function quizDue(startDate: string, week: number): Date {
-  return calWeekDueSunday(startDate, learnDueCalWeek(week));
+  return calWeekDueSunday(startDate, learnCalWeek(week));
 }
 
+/** The current calendar week, 1 to `WEEKS_TOTAL`, the number shown to the user. */
 export function currentWeek(startDate: string, now: Date = new Date()): number {
   for (let w = WEEKS_TOTAL; w >= 1; w--) {
-    if (now >= weekStart(startDate, w)) return w;
+    if (now >= calWeekStart(startDate, w)) return w;
   }
   return 1;
+}
+
+/** Which topic (1 to `TOPICS_TOTAL`) a given calendar week falls in. */
+export function topicForWeek(week: number): number {
+  return Math.ceil(week / 2);
 }
 
 /** True when the deadline has passed and nothing was submitted. */

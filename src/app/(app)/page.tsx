@@ -5,7 +5,7 @@ import { Page } from "@/components/primitives/Page";
 import { SectionHeader } from "@/components/primitives/Label";
 import { ModuleTile } from "@/components/ModuleTile";
 import { formatGpa } from "@/lib/gpa";
-import { relativeDue, formatDate, WEEKS_TOTAL } from "@/lib/schedule";
+import { relativeDue, formatDate, WEEKS_TOTAL, TOPICS_TOTAL } from "@/lib/schedule";
 
 export default async function DashboardPage() {
   const course = await loadCourse();
@@ -22,7 +22,7 @@ export default async function DashboardPage() {
 
       {/* Stats. The only numerals that get the accent are the ones that mean progress. */}
       <div className="mb-16 grid grid-cols-3 border-y border-line">
-        <Cell value={`${course.completeCount}/${WEEKS_TOTAL}`} label="Topics complete" accent />
+        <Cell value={`${course.completeCount}/${TOPICS_TOTAL}`} label="Topics complete" accent />
         <Cell value={formatGpa(course.gpa)} label="Course GPA" divided />
         <Cell value={String(course.week).padStart(2, "0")} label="Current week" divided />
       </div>
@@ -74,7 +74,7 @@ export default async function DashboardPage() {
           </Link>
         ) : (
           <p className="mt-6 text-muted">
-            Every topic is complete. Sixteen weeks, done.
+            Every topic is complete. Sixteen topics, done.
           </p>
         )}
       </section>

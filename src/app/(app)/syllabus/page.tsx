@@ -2,7 +2,7 @@ import Link from "next/link";
 import { loadCourse } from "@/lib/course";
 import { Page, PageTitle } from "@/components/primitives/Page";
 import { SectionHeader } from "@/components/primitives/Label";
-import { weekStart, projectDue, formatDate, WEEKS_TOTAL } from "@/lib/schedule";
+import { weekStart, projectDue, formatDate, TOPICS_TOTAL } from "@/lib/schedule";
 
 const POLICIES = [
   {
@@ -26,7 +26,7 @@ const POLICIES = [
 export default async function SyllabusPage() {
   const course = await loadCourse();
   const first = weekStart(course.startDate, 1);
-  const last = projectDue(course.startDate, WEEKS_TOTAL);
+  const last = projectDue(course.startDate, TOPICS_TOTAL);
   const totalCalendarWeeks = Math.round((last.getTime() - first.getTime()) / (7 * 24 * 60 * 60 * 1000));
 
   return (

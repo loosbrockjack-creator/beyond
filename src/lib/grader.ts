@@ -14,9 +14,10 @@ export interface GradeRequest {
   brief: string | null;
   hardConstraint: string | null;
   repoUrl: string | null;
-  notes: string | null;
+  /** The student's write-up: how they used this week's principle. The primary evidence. */
+  studentBrief: string | null;
   rubric: RubricItem[];
-  /** The actual source, fetched from GitHub. Null when it could not be read. */
+  /** The actual source, fetched from GitHub. Secondary: a contradiction check, not evidence. */
   code: string | null;
   codeError: string | null;
 }
@@ -52,33 +53,41 @@ const GradeSchema = z.object({
   feedback: z
     .string()
     .describe(
-      "Two to four sentences of overall feedback. Lead with the strongest part, then the single most useful thing to fix.",
+      "Two to four sentences of overall feedback on the approach described in the brief. Lead " +
+        "with the strongest part of how they applied this week's principle, then the single most " +
+        "useful better way they could have applied it.",
     ),
 });
 
 const SYSTEM = `You grade weekly build projects for a self-directed course on building with AI.
 
 You are grading one student who is deliberately holding themselves to a high bar. Be
-accurate rather than encouraging. A project that merely runs is not full marks. Full
-marks means there is genuinely nothing worth changing.
+accurate rather than encouraging. A thin brief that merely asserts success is not full
+marks. Full marks means the brief shows real, specific understanding of this week's
+principle and good judgment in applying it.
 
-You are given the rubric, the brief, the brief's hard constraint, the student's notes,
-and the actual source code from their repository. Grade the code. The notes are context
-for intent, not evidence. When the code contradicts the notes, the code wins.
+The student's brief is the primary evidence: a short account of what they built, how
+they used this week's principle, the tradeoffs they weighed, and where they are unsure.
+You do not have the full history of what they did while building it, so you are grading
+the account, not reverse-engineering a finished product. A repository link may be given
+as secondary context. If its code plainly contradicts a specific claim in the brief,
+say so and weigh it down, but do not score against code the brief never claimed to have
+written, and do not penalize the brief for a repository that is missing, private, or
+unreadable: say that plainly where relevant and grade the brief on its own terms.
 
-The hard constraint is the point of the week. If the code does not genuinely satisfy it,
-"Correct core mechanic" cannot score above half, no matter how polished the rest is.
-Faking it counts as not satisfying it: a retry loop in code is not the same as returning
-an error into the model's context, and a turn counter is not the same as a real stopping
-condition.
+The hard constraint, when given, is the point of the week. A brief that does not address
+it, or addresses it with something that only superficially resembles it, cannot score
+well on whichever criterion covers it, no matter how well-written the rest is.
 
-Every comment must cite something specific: a file, a function, a line of reasoning about
-what the code actually does. "Good error handling" is a useless comment. "loop.py:44
-catches the timeout and retries in code, where the brief asked for the error to return
-into context" is a useful one.
+For every criterion, give concrete feedback: what the brief specifically said that earned
+or cost points, and when it falls short, name a better way they could have applied this
+week's principle, not just "add more detail." "Good use of retries" is a useless comment.
+"The brief says it retries on failure but never says what signal tells it to stop, which
+is the actual hard part this week; a real stopping condition, like checking the error
+type before retrying, would have been a stronger brief" is a useful one.
 
-If the source could not be read, say so plainly in every affected comment and score
-conservatively rather than assuming the best.
+If the brief is missing or too thin to evaluate, say so plainly and score conservatively
+rather than assuming the best.
 
 Award whole points only, never more than a criterion's maximum. Return one score per
 criterion, in order.`;
@@ -97,14 +106,14 @@ export class AIGrader implements Grader {
 
     const prompt = [
       `PROJECT: ${req.projectTitle}`,
-      req.brief ? `\nBRIEF:\n${req.brief}` : "",
+      req.brief ? `\nASSIGNED BRIEF:\n${req.brief}` : "",
       req.hardConstraint ? `\nHARD CONSTRAINT (the point of the week):\n${req.hardConstraint}` : "",
       `\nRUBRIC:\n${rubricText}`,
-      `\nREPOSITORY: ${req.repoUrl ?? "not provided"}`,
-      `\nSTUDENT NOTES:\n${req.notes?.trim() || "(none provided)"}`,
+      `\nSTUDENT'S BRIEF (the primary evidence, grade this):\n${req.studentBrief?.trim() || "(none provided)"}`,
+      `\nREPOSITORY (secondary context only): ${req.repoUrl ?? "not provided"}`,
       req.code
-        ? `\n\nSOURCE CODE:\n${req.code}`
-        : `\n\nSOURCE CODE: could not be read. ${req.codeError ?? ""}`,
+        ? `\n\nSOURCE CODE, for checking contradictions only:\n${req.code}`
+        : `\n\nSOURCE CODE: could not be read. ${req.codeError ?? "No repository was provided."} This is not a mark against the brief by itself.`,
     ].join("\n");
 
     const response = await this.client.messages.parse({

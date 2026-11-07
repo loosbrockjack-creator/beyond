@@ -8,7 +8,7 @@ import { SectionHeader } from "@/components/primitives/Label";
 import { Breadcrumb } from "@/components/nav/Breadcrumb";
 import { RubricBreakdown, type RubricRow } from "@/components/grades/RubricBreakdown";
 import { SubmitForm } from "@/components/SubmitForm";
-import { GenerateBrief } from "@/components/GenerateBrief";
+import { GenerateRubric } from "@/components/GenerateRubric";
 import { formatDateTime, relativeDue, formatDate } from "@/lib/schedule";
 import { Button } from "@/components/primitives/Button";
 import { labForTopic } from "@/lib/labs";
@@ -163,13 +163,22 @@ export default async function AssignmentPage({
       ) : null}
 
       <section className="mb-14">
-        <SectionHeader right="100 points">Rubric</SectionHeader>
-        <div className="mt-4">
-          <RubricBreakdown rows={rows} total={submission?.total_score ?? null} />
-        </div>
+        <SectionHeader right={rows.length > 0 ? "100 points" : undefined}>Rubric</SectionHeader>
+        {rows.length > 0 ? (
+          <div className="mt-4">
+            <RubricBreakdown rows={rows} total={submission?.total_score ?? null} />
+          </div>
+        ) : (
+          <div className="mt-6">
+            <p className="mb-5 max-w-[62ch] text-sm text-muted">
+              No rubric written yet. Generate one from the brief above.
+            </p>
+            <GenerateRubric projectId={view.project.id} />
+          </div>
+        )}
       </section>
 
-      <section className="mb-14">
+      <section>
         <SectionHeader>{submission ? "Resubmit" : "Submit"}</SectionHeader>
         <p className="mt-5 mb-6 text-sm text-muted">Due {formatDateTime(view.due)}.</p>
         <SubmitForm
@@ -178,15 +187,6 @@ export default async function AssignmentPage({
           initialRepoUrl={submission?.repo_url ?? ""}
           initialNotes={submission?.notes ?? ""}
         />
-      </section>
-
-      <section>
-        <SectionHeader>Brief</SectionHeader>
-        <p className="mt-5 mb-5 max-w-[62ch] text-xs text-muted">
-          Written from this week&apos;s sources and frozen. Regenerating replaces it and the
-          rubric, so avoid it once you have started building.
-        </p>
-        <GenerateBrief topicId={view.topic.id} regenerate />
       </section>
     </Page>
   );

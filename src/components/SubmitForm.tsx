@@ -45,8 +45,28 @@ export function SubmitForm({
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
+        <label htmlFor="brief" className="label">
+          Brief
+        </label>
+        <textarea
+          id="brief"
+          value={notes}
+          rows={10}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="What you built, how you used this week's principle, the tradeoffs you weighed, and where you are unsure."
+          className="rounded-md border border-line-strong bg-surface px-3.5 py-3 text-sm text-ink
+                     transition-colors duration-150 placeholder:text-faint
+                     focus:border-accent focus:outline-none"
+        />
+        <p className="text-xs text-muted">
+          This is what gets graded. A thin brief that just claims success gets a conservative
+          score, no matter how good the repository is.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
         <label htmlFor="repo" className="label">
-          Repository
+          Repository <span className="text-faint">(optional, secondary)</span>
         </label>
         <input
           id="repo"
@@ -58,25 +78,9 @@ export function SubmitForm({
                      transition-colors duration-150 placeholder:text-faint
                      focus:border-accent focus:outline-none"
         />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label htmlFor="notes" className="label">
-          Notes
-        </label>
-        <textarea
-          id="notes"
-          value={notes}
-          rows={8}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="What you built, the decisions you made, and the parts you are unsure about. Paste the key code here too."
-          className="rounded-md border border-line-strong bg-surface px-3.5 py-3 text-sm text-ink
-                     transition-colors duration-150 placeholder:text-faint
-                     focus:border-accent focus:outline-none"
-        />
         <p className="text-xs text-muted">
-          The grader cannot open your repository, so it scores these notes and anything you
-          paste into them. Thin notes get conservative scores.
+          For your own record. The grader only checks it against the brief for outright
+          contradictions, never scores it on its own.
         </p>
       </div>
 

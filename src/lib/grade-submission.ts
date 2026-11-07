@@ -50,9 +50,9 @@ export async function gradeSubmission(submissionId: string): Promise<void> {
 
   await supabase.from("submissions").update({ status: "grading" }).eq("id", submissionId);
 
-  // Read the actual code. A failure here is reported to the grader rather than
-  // thrown, so a private or missing repo produces an honest low grade instead
-  // of a crash.
+  // Read the actual code, as secondary context only. A failure here is reported to
+  // the grader rather than thrown, so a private or missing repo never crashes grading
+  // and is never itself a mark against the brief.
   let code: string | null = null;
   let codeError: string | null = null;
   if (submission.repo_url) {
@@ -73,7 +73,7 @@ export async function gradeSubmission(submissionId: string): Promise<void> {
       brief: project.brief,
       hardConstraint: project.hard_constraint,
       repoUrl: submission.repo_url,
-      notes: submission.notes,
+      studentBrief: submission.notes,
       rubric,
       code,
       codeError,

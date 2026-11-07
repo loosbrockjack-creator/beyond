@@ -11,7 +11,6 @@ import { Button } from "@/components/primitives/Button";
 import { AttemptHistory } from "@/components/quiz/AttemptHistory";
 import { formatDate, formatDateTime, relativeDue } from "@/lib/schedule";
 import { SessionList } from "@/components/SessionList";
-import { GenerateBrief } from "@/components/GenerateBrief";
 import { labForTopic } from "@/lib/labs";
 
 export default async function TopicPage({
@@ -205,21 +204,9 @@ export default async function TopicPage({
       ) : (
         <section className="mb-14">
           <SectionHeader>Project</SectionHeader>
-          {view.sessions.length === 0 ? (
-            <p className="mt-6 max-w-[62ch] text-sm text-muted">
-              No project yet. Sessions have to exist first, since the brief is written
-              from them.
-            </p>
-          ) : (
-            <>
-              <p className="mt-6 mb-6 max-w-[62ch] text-sm text-muted">
-                No project yet. One gets written from this week&apos;s {view.sessions.length}{" "}
-                sources, aimed at whatever you recalled worst, then frozen so you can build
-                against it all week.
-              </p>
-              <GenerateBrief topicId={view.topic.id} />
-            </>
-          )}
+          <p className="mt-6 max-w-[62ch] text-sm text-muted">
+            No project yet. This week&apos;s brief hasn&apos;t been written in.
+          </p>
         </section>
       )}
 

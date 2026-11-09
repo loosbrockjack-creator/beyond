@@ -1,24 +1,27 @@
 # Current Week
 
-## Week 2
+## Week 3
 
-**Topic:** Working effectively with AI coding agents
+**Topic:** Tool use and function calling
 
 **Status:** Curriculum ready; study not yet recorded as complete
 
-**Curriculum:** [Week 02: Working effectively with AI coding agents](weeks/week-02-working-effectively-with-ai-coding-agents.md)
+**Curriculum:** [Week 03: Tool Use and Function Calling](weeks/week-03-tool-use-and-function-calling.md)
 
-**Time:** Approximately 120 minutes across five blocks
+**Time:** Approximately 115 minutes across four blocks and a completion check, excluding breaks
 
-**Researched:** October 4, 2026
+**Researched:** November 8, 2026
 
 ## Learning focus
 
-- Delegate outcomes and reassess old instructions.
-- Write clear briefs with relevant context and acceptance checks.
-- Preserve useful project state across sessions.
-- Verify results and diagnose failures using evidence.
-- Practice a small build-and-verification loop.
+- Follow a tool call from the model's request to execution and returned results.
+- Assess tool descriptions, inputs, outputs, and failure handling.
+- Understand tool discovery and code-based orchestration.
+- Apply the concepts to a hypothetical internship-agent workflow.
+
+## Pacing
+
+Assigned reading totals approximately 4,730 words. Reading time is estimated at 200 words per minute, with separate allowances for technical material, rereading, and understanding checks. Record actual times to calibrate the next topic.
 
 ## Next action
 
@@ -26,4 +29,4 @@ Study Block 1 of the linked curriculum, then continue in order. Use the normal t
 
 Say "Sync learning state" to update the tutor state after studying. Say "Implement this" when a learning concept should become an explicit Beyond implementation brief or GitHub issue.
 
-The curriculum's checklist prototype is a separate practice exercise. It does not authorize changes to the Beyond application.
+The internship-agent walkthrough is a learning exercise, not a new project assignment or authorization to modify the Beyond application.

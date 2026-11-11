@@ -52,8 +52,13 @@ where t.slug = :'slug';
 
 -- 6. One session per source. order_index communicates the intended reading
 --    order but does not enforce it; every session is open from the start.
+--    Before writing est_minutes, run:
+--      npm run estimate -- https://...
+--    It fetches the article, extracts the real body text (not nav/ads), and
+--    prints a minutes figure from actual word count plus code density. Do not
+--    guess the number by hand.
 insert into sessions (topic_id, order_index, title, source_url, source_kind, est_minutes, note)
-select id, 1, 'Title of the piece', 'https://...', 'article', 15,
+select id, 1, 'Title of the piece', 'https://...', 'article', 15, -- replace 15 with the script's output
        'Why this one, and what to watch for while reading.'
 from topics where slug = :'slug';
 
